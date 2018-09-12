@@ -1,0 +1,17 @@
+<div class="top-offset">
+  <ul class="list-group">
+    <li class="list-group-item" *ngFor="let task of tasks">
+      <div class="row">
+        <div class="col-sm-8">
+          <span [ngClass]="{'overdue': task.finishDate < today}">
+            {{ task.description}}
+          </span>
+        </div>
+        <div class="col-sm-4 text-right">
+          {{ task.startDate.toLocaleDateString()}} - {{ task.finishDate.toLocaleDateString() }}
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>
+
