@@ -1,17 +1,49 @@
 <div class="top-offset">
-  <ul class="list-group">
-    <li class="list-group-item" *ngFor="let task of tasks">
-      <div class="row">
-        <div class="col-sm-8">
-          <span [ngClass]="{'overdue': task.finishDate < today}">
-            {{ task.description}}
-          </span>
+  <app-task></app-task>
+  <table class="table">
+    <thead class="thead-light">
+    <tr>
+      <th scope="col">Description</th>
+      <th scope="col">Creation Date</th>
+      <th scope="col">Finish Date</th>
+      <th scope="col">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let task of tasks; let i = index">
+      <td [ngClass]="{overdue: task.finishDate < today}" scope="row">
+        <span *ngIf="activeIndex != i">{{ task.description }}</span>
+        <div *ngIf="activeIndex == i" class="form-group not-bold">
+          <label for="description">Description</label>
+          <textarea [(ngModel)]="tempTask.description" id="description" name="description" class="form-control"
+                    placeholder="Enter description"
+                    maxlength="128" rows="2" required #description="ngModel"></textarea>
+          <div *ngIf="description.invalid && (description.dirty || description.touched)"
+               class="alert alert-danger">
+
+            <div *ngIf="!!description.errors.required">
+              Description is required.
+            </div>
+            <div *ngIf="!!description.errors.maxLength">
+              Name must not be longer than 128 characters.
+            </div>
+          </div>
         </div>
-        <div class="col-sm-4 text-right">
-          {{ task.startDate.toLocaleDateString()}} - {{ task.finishDate.toLocaleDateString() }}
+      </td>
+      <td>{{task.startDate.toLocaleDateString()}}</td>
+      <td>{{task.finishDate.toLocaleDateString()}}</td>
+      <td>
+        <div class="action-btn-block">
+          <button class="btn btn-primary" *ngIf="activeIndex != i" (click)="enableEdit(i)">Edit</button>
+          <button class="btn btn-primary" *ngIf="activeIndex == i" (click)="updateTask(i)">Save</button>
         </div>
-      </div>
-    </li>
-  </ul>
+        <div class="action-btn-block">
+          <button class="btn btn-primary" *ngIf="activeIndex != i" (click)="deleteTask(i)">Delete</button>
+          <button class="btn btn-default" *ngIf="activeIndex == i" (click)="cancelEdit()">Cancel</button>
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
 </div>
 

@@ -1,3 +1,23 @@
-<p>
-  task works!
-</p>
+<form #newTask="ngForm" (ngSubmit)="onSubmit(newTask)">
+  <div class="row">
+    <div class="col-sm-5 form-group">
+      <label for="description">Description</label>
+      <textarea [(ngModel)]="task.description" id="description" name="description" class="form-control" placeholder="Enter description"
+                maxlength="128" rows="2" required #description="ngModel"></textarea>
+      <div *ngIf="description.invalid && (description.dirty || description.touched)"
+           class="alert alert-danger">
+
+        <div *ngIf="!!description.errors.required">
+          Description is required.
+        </div>
+        <div *ngIf="!!description.errors.maxLength">
+          Name must not be longer than 128 characters.
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-2 submit-btn">
+      <button class="btn btn-success">Submit</button>
+    </div>
+  </div>
+</form>
