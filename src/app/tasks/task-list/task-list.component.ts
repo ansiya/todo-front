@@ -33,9 +33,9 @@ export class TaskListComponent implements OnInit {
   updateTask(i) {
     if (this.tempTask.description != "") {
       this.taskService.updateTask(Object.assign({}, this.tempTask), i);
+      this.activeIndex = null;
+      this.tempTask = new Task();
     }
-    this.activeIndex = null;
-    this.tempTask = new Task();
   }
 
   deleteTask(i) {
