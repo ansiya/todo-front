@@ -55,9 +55,11 @@ export class TaskListComponent implements OnInit {
   getTasks(): void {
    this.taskService.getTasks()
      .subscribe((tasks) => {
-       if(!tasks || tasks.length === 0) {
+       if (!tasks || tasks.length === 0) {
          this.errorMsg = "You haven't planned any task yet.";
          console.log(this.errorMsg);
+       } else {
+         this.errorMsg = null;
        }
        this.tasks = tasks;
      });
