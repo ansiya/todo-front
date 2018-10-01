@@ -1,23 +1,35 @@
-<form #newTask="ngForm" (ngSubmit)="onSubmit(newTask)">
+<form [formGroup]="rForm" (ngSubmit)="onSubmit(rForm)">
   <div class="row">
     <div class="col-sm-5 form-group">
       <label for="description">Description</label>
-      <textarea [(ngModel)]="task.description" id="description" name="description" class="form-control" placeholder="Enter description"
-                maxlength="128" rows="2" required #description="ngModel"></textarea>
-      <div *ngIf="description.invalid && (description.dirty || description.touched)"
+      <textarea formControlName="description" id="description" class="form-control" placeholder="Enter description"
+                maxlength="128" rows="2" required></textarea>
+      <div *ngIf="!rForm.controls['description'].valid && rForm.controls['description'].touched"
            class="alert alert-danger">
 
-        <div *ngIf="!!description.errors.required">
+        <div *ngIf="rForm.controls['description'].hasError('required')">
           Description is required.
         </div>
-        <div *ngIf="!!description.errors.maxLength">
-          Name must not be longer than 128 characters.
+        <div *ngIf="rForm.controls['description'].hasError('maxLength')">
+          Description must not be longer than 128 characters.
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-5 form-group">
+      <label for="finishDate">Finish Date</label>
+      <input type="date" formControlName="finishDate" id="finishDate" class="form-control"
+             placeholder="Finish Date" min="{{ today | date:'yyyy-MM-dd' }}"/>
+      <div *ngIf="!rForm.controls['finishDate'].valid && rForm.controls['finishDate'].touched"
+           class="alert alert-danger">
+
+        <div *ngIf="rForm.controls['finishDate'].hasError('required')">
+          Finish Date is required.
         </div>
       </div>
     </div>
 
     <div class="col-sm-2 submit-btn">
-      <button class="btn btn-success">Submit</button>
+      <button class="btn btn-success" [disabled]="!rForm.valid">Submit</button>
     </div>
   </div>
 </form>

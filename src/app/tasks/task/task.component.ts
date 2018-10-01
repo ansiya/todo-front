@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import {NgForm} from '@angular/forms';
+import {NgForm, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { Task } from '../task';
 import { TaskService } from '../task.service';
 import {EmptyError} from "rxjs/index";
@@ -12,22 +12,31 @@ import {EmptyError} from "rxjs/index";
 })
 export class TaskComponent implements OnInit {
 
+  rForm: FormGroup;
   task = new Task();
+  today = new Date();
+
 
   @Output() messageEvent = new EventEmitter<Task>();
 
-  constructor(private taskService: TaskService) { }
+  constructor(private taskService: TaskService, fb: FormBuilder) {
+    this.rForm = fb.group({
+      'description': [null, [Validators.required, Validators.maxLength(128)]],
+      'finishDate': [null, Validators.required]
+    })
+  }
 
   ngOnInit() {
   }
 
-  onSubmit(f: NgForm) {
-    if(this.task.description != "" ){
-      this.task.finishDate = new Date();
+  onSubmit(f: FormGroup) {
+
+      this.task.description = f.controls['description'].value;
+      this.task.finishDate = new Date(f.controls['finishDate'].value);
       this.taskService.addTask(Object.assign({}, this.task));
       this.task = new Task();
-      f.resetForm();
-    }
+      f.reset();
+
   }
 
 }

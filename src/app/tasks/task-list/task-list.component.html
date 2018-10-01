@@ -1,5 +1,6 @@
 <div class="top-offset">
   <app-task></app-task>
+
   <table class="table">
     <thead class="thead-light">
     <tr>
@@ -10,7 +11,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let task of tasks; let i = index">
+    <tr *ngFor="let task of tasks; let i = index; ">
       <td [ngClass]="{overdue: task.finishDate < today}" scope="row">
         <span *ngIf="activeIndex != i">{{ task.description }}</span>
         <div *ngIf="activeIndex == i" class="form-group not-bold">
@@ -31,7 +32,23 @@
         </div>
       </td>
       <td>{{task.startDate.toLocaleDateString()}}</td>
-      <td>{{task.finishDate.toLocaleDateString()}}</td>
+      <td>
+        <span *ngIf="activeIndex != i">{{ task.finishDate.toLocaleDateString() }}</span>
+        <div *ngIf="activeIndex == i" class="form-group">
+          <label for="finishDate">Finish Date</label>
+
+          <input type="date" [(ngModel)]="tempDate" id="finishDate" name="finishDate" class="form-control"
+                 min="{{ today | date:'yyyy-MM-dd' }}" required #finishDate="ngModel" />
+          <div *ngIf="finishDate.invalid && (finishDate.dirty || finishDate.touched)"
+               class="alert alert-danger">
+
+            <div *ngIf="!!finishDate.errors.required">
+              Finish Date is required.
+            </div>
+          </div>
+        </div>
+      </td>
+
       <td>
         <div class="action-btn-block">
           <button class="btn btn-primary" *ngIf="activeIndex != i" (click)="enableEdit(i)">Edit</button>
@@ -45,5 +62,6 @@
     </tr>
     </tbody>
   </table>
+  <span *ngIf="errorMsg">{{ errorMsg }}</span>
 </div>
 

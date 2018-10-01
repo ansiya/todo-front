@@ -12,6 +12,8 @@ export class TaskListComponent implements OnInit {
   today = new Date();
   activeIndex = null;
   tempTask: Task;
+  tempDate: string;
+  errorMsg: string;
 
   constructor(private taskService: TaskService) {
   }
@@ -22,6 +24,7 @@ export class TaskListComponent implements OnInit {
 
   enableEdit(i) {
     this.activeIndex = i;
+    this.tempDate = this.tasks[i].finishDate.toISOString().substring(0,10);
     this.tempTask = Object.assign({}, this.tasks[i]);
   }
 
@@ -32,6 +35,7 @@ export class TaskListComponent implements OnInit {
 
   updateTask(i) {
     if (this.tempTask.description != "") {
+      this.tempTask.finishDate = new Date(this.tempDate);
       this.taskService.updateTask(Object.assign({}, this.tempTask), i);
       this.activeIndex = null;
       this.tempTask = new Task();
@@ -39,11 +43,21 @@ export class TaskListComponent implements OnInit {
   }
 
   deleteTask(i) {
-    this.taskService.removeTask(i);
+    const id = this.tasks[i]._id;
+    this.taskService.removeTask(id).subscribe(() =>
+      this.getTasks()
+    );
   }
 
   getTasks(): void {
-    this.tasks = this.taskService.getTasks();
+   this.taskService.getTasks()
+     .subscribe((tasks) => {
+       if(!tasks || tasks.length === 0){
+         this.errorMsg = "You haven't planned any task yet.";
+         console.log(this.errorMsg);
+       }
+       this.tasks = tasks;
+     });
   }
 
 }
