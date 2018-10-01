@@ -17,11 +17,11 @@ export class TaskService {
 
   constructor(private http: HttpClient) { }
 
-  getTasks() : Observable<Task[]> {
+  getTasks(): Observable<Task[]> {
     return this.http.get(this.url)
       .pipe(map((response: any) => {
-        let tasks = new Array<Task>();
-        for(let i = 0; i < response.doc.length; i++){
+        const tasks = [];
+        for (let i = 0; i < response.doc.length; i++) {
           tasks.push(Task.parse(response.doc[i]));
         }
         return tasks;
@@ -29,12 +29,20 @@ export class TaskService {
 
   }
 
-  addTask(task: Task): void {
-    TASKS.push(task);
+  addTask(task: Task): Observable<Task> {
+    return this.http.post<Task>(this.url, task).pipe(
+      tap((_task: Task) => console.log(`added hero w/ id=${_task._id}`)),
+      catchError(this.handleError<Task>('addTask'))
+    );
   }
 
-  updateTask(task: Task, i:number): void {
-    TASKS[i] = task;
+  updateTask(task: Task, id: string): Observable<Task> {
+    const url = `${this.url}/${id}`;
+
+    return this.http.put<Task>(url, task).pipe(
+      tap(_ => console.log(`updated hero id=${id}`)),
+      catchError(this.handleError<Task>('updateTask'))
+    );
   }
 
   /** DELETE: delete the task from the server */

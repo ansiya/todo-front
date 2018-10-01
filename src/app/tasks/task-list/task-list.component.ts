@@ -34,9 +34,12 @@ export class TaskListComponent implements OnInit {
   }
 
   updateTask(i) {
-    if (this.tempTask.description != "") {
+    if (this.tempTask.description !== '' && this.tempTask.finishDate) {
+      const id = this.tasks[i]._id;
       this.tempTask.finishDate = new Date(this.tempDate);
-      this.taskService.updateTask(Object.assign({}, this.tempTask), i);
+      this.taskService.updateTask(this.tempTask, id).subscribe(() =>
+        this.getTasks()
+      );
       this.activeIndex = null;
       this.tempTask = new Task();
     }
@@ -52,12 +55,16 @@ export class TaskListComponent implements OnInit {
   getTasks(): void {
    this.taskService.getTasks()
      .subscribe((tasks) => {
-       if(!tasks || tasks.length === 0){
+       if(!tasks || tasks.length === 0) {
          this.errorMsg = "You haven't planned any task yet.";
          console.log(this.errorMsg);
        }
        this.tasks = tasks;
      });
+  }
+
+  reload($event: any) {
+    this.getTasks();
   }
 
 }
